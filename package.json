@@ -1,0 +1,32 @@
+{
+  "name": "polyfills",
+  "description": "user-agent-based polyfill combinator",
+  "version": "0.1.0",
+  "dependencies": {
+    "mz": "*",
+    "useragent": "*",
+    "uglify-js": "*",
+    "semver": "*",
+    "co": "*",
+    "mkdirp": "*",
+    "cogent": "*"
+
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "rimraf": "*"
+  },
+  "scripts": {
+    "test": "mocha --harmony-generators --require should --reporter spec --bail"
+  },
+  "main": "lib",
+  "author": {
+    "name": "Jonathan Ong",
+    "email": "me@jongleberry.com",
+    "url": "http://jongleberry.com",
+    "twitter": "https://twitter.com/jongleberry"
+  },
+  "repository": "polyfills/polyfills",
+  "license": "MIT"
+}
