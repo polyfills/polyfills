@@ -9,8 +9,9 @@
     "semver": "*",
     "co": "*",
     "mkdirp": "*",
-    "cogent": "*"
-
+    "cogent": "*",
+    "generator-supported": "*",
+    "gnode": "*"
   },
   "devDependencies": {
     "mocha": "*",
