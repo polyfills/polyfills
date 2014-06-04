@@ -3,6 +3,7 @@ var co = require('co')
 var fs = require('mz/fs')
 var path = require('path')
 var assert = require('assert')
+var decompress = require('mz/zlib').gunzip
 
 var polyfill
 
@@ -28,6 +29,12 @@ describe('Polyfills', function () {
       var out = yield* polyfill(chrome).build(true)
       new Function(out)
       assert(!/\s{2,}/.test(out))
+    }))
+
+    it('should gzip', co(function* () {
+      var gzipped = yield* polyfill(chrome).build(true, true)
+      var min = yield* polyfill(chrome).build(true, false)
+      assert.equal(min, yield decompress(gzipped))
     }))
 
     it('should cache', co(function* () {

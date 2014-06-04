@@ -78,11 +78,12 @@ Return a new instance of `polyfill` based on `options`.
   The names are included in [lib/polyfills.js](lib/polyfills.js).
 - `cache` - folder to cache polyfill bundles.
 
-### var js = yield* polyfill(useragent).build([minified])
+### var js = yield* polyfill(useragent).build([minified], [gzipped])
 
 This is the primary function.
 
 - `minified` - defaults to `process.env.NODE_ENV === 'production'`
+- `gzipped` - whether to return a compressed buffer instead of a string. 
 
 `js` is the final JS bundle that you can serve to the client.
 
