@@ -19,6 +19,26 @@ before(function () {
 })
 
 describe('Polyfills', function () {
+  describe('describing bundles', function () {
+    it('should allow specific inclusions', co(function* () {
+      var p = require('..')({
+        include: ['requestanimationframe']
+      })
+
+      var out = yield* p(chrome).build()
+      assert(!out.trim())
+    }))
+
+    it('should allow specific exclusions', co(function* () {
+      var p = require('..')({
+        exclude: ['domelements']
+      })
+
+      var out = yield* p(chrome).build()
+      assert(!~out.indexOf('elementsPrototype.queryAll'))
+    }))
+  })
+
   describe('building a bundle', function () {
     it('should build', co(function* () {
       var out = yield* polyfill(chrome).build()
