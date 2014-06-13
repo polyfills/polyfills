@@ -3,20 +3,22 @@
   "description": "user-agent-based polyfill combinator",
   "version": "0.1.1",
   "dependencies": {
-    "mz": "*",
-    "useragent": "*",
-    "uglify-js": "*",
-    "semver": "*",
-    "co": "*",
-    "mkdirp": "*",
-    "cogent": "*",
-    "generator-supported": "*",
-    "gnode": "*"
+    "co": "3",
+    "mz": "0",
+    "gnode": "0",
+    "semver": "2",
+    "mkdirp": "0",
+    "cogent": "0",
+    "useragent": "2",
+    "uglify-js": "2",
+    "lru-cache": "2",
+    "node-zopfli": "1",
+    "generator-supported": "0"
   },
   "devDependencies": {
-    "mocha": "*",
-    "should": "*",
-    "rimraf": "*"
+    "mocha": "1",
+    "should": "4",
+    "rimraf": "2"
   },
   "scripts": {
     "test": "mocha --harmony-generators --require should --reporter spec --bail"
