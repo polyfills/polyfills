@@ -40,8 +40,11 @@ describe('Polyfills', function () {
   })
 
   describe('building a bundle', function () {
+    var p
+
     it('should build', co(function* () {
-      var out = yield* polyfill(chrome).build()
+      p = polyfill(chrome)
+      var out = yield* p.build()
       new Function(out) // make sure there are no syntax errors
     }))
 
@@ -58,8 +61,8 @@ describe('Polyfills', function () {
     }))
 
     it('should cache', co(function* () {
-      yield fs.stat(path.join(__dirname, '..', 'cache', 'Chrome_36_0_1944.js'))
-      yield fs.stat(path.join(__dirname, '..', 'cache', 'Chrome_36_0_1944.min.js'))
+      yield fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.js'))
+      yield fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.min.js'))
     }))
   })
 })
