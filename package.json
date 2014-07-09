@@ -8,7 +8,6 @@
     "gnode": "0",
     "semver": "2",
     "mkdirp": "0",
-    "cogent": "0",
     "useragent": "2",
     "uglify-js": "2",
     "lru-cache": "2",
@@ -16,6 +15,7 @@
     "generator-supported": "0"
   },
   "devDependencies": {
+    "cogent": "1",
     "mocha": "1",
     "should": "4",
     "rimraf": "2"
