@@ -1,6 +1,11 @@
 
 # Polyfills
 
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![Gittip][gittip-image]][gittip-url]
+
 A user-agent-based polyfill combinator.
 Create polyfill builds based on the client's browser and only send only what's needed.
 
@@ -83,7 +88,7 @@ Return a new instance of `polyfill` based on `options`.
 This is the primary function.
 
 - `minified` - defaults to `process.env.NODE_ENV === 'production'`
-- `gzipped` - whether to return a compressed buffer instead of a string. 
+- `gzipped` - whether to return a compressed buffer instead of a string.
 
 `js` is the final JS bundle that you can serve to the client.
 
@@ -106,3 +111,12 @@ app.use(function (req, res) {
 
 Feel free to create PRs to add polyfills.
 Checkout [lib/polyfills.js](lib/polyfills.js) to see what is needed.
+
+[npm-image]: https://img.shields.io/npm/v/polyfills.svg?style=flat
+[npm-url]: https://npmjs.org/package/polyfills
+[travis-image]: https://img.shields.io/travis/polyfills/polyfills.svg?style=flat
+[travis-url]: https://travis-ci.org/polyfills/polyfills
+[coveralls-image]: https://img.shields.io/coveralls/polyfills/polyfills.svg?style=flat
+[coveralls-url]: https://coveralls.io/r/polyfills/polyfills?branch=master
+[gittip-image]: https://img.shields.io/gittip/jonathanong.svg?style=flat
+[gittip-url]: https://www.gittip.com/jonathanong/

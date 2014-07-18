@@ -16,11 +16,14 @@
   "devDependencies": {
     "cogent": "1",
     "mocha": "1",
-    "rimraf": "2"
+    "rimraf": "2",
+    "istanbul-harmony": "0"
   },
   "scripts": {
+    "update": "node --harmony-generators lib/install",
     "test": "mocha --harmony-generators --reporter spec",
-    "update": "node --harmony-generators lib/install"
+    "test-cov": "node --harmony-generators node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot",
+    "test-travis": "node --harmony-generators node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot"
   },
   "main": "lib",
   "author": {
