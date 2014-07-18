@@ -7,7 +7,7 @@
 [![Gittip][gittip-image]][gittip-url]
 
 A user-agent-based polyfill combinator.
-Create polyfill builds based on the client's browser and only send only what's needed.
+Create polyfill builds based on the client's browser and send only what's needed.
 
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
 - Caches builds locally to a `cache/` folder.
@@ -22,7 +22,7 @@ but it has a couple of different philosophies:
 - It does not use its own user agent parsing.
 
 This library will only use small, well tested polyfills.
-The only exception are `ECMAScript` bundles such as [es5-shim](https://github.com/es-shims/es5-shim).
+The only exceptions are `ECMAScript` bundles such as [es5-shim](https://github.com/es-shims/es5-shim).
 An ES6 shim will be included once ES6 is finalized and a majority of browsers support all ES6 features.
 Until then, ES6 features will be included piecewise.
 
@@ -58,14 +58,6 @@ Until then, ES6 features will be included piecewise.
 npm install polyfills
 ```
 
-This library uses promises.
-If you're running a version of node that does not support Promises (anything lower than 0.11.13),
-then you __must__ install `bluebird` as well:
-
-```bash
-npm install bluebird
-```
-
 ## Usage
 
 ### var polyfill = Polyfills([options])
@@ -83,7 +75,7 @@ Return a new instance of `polyfill` based on `options`.
   The names are included in [lib/polyfills.js](lib/polyfills.js).
 - `cache` - folder to cache polyfill bundles.
 
-### var js = yield* polyfill(useragent).build([minified], [gzipped])
+### polyfill(useragent).build([minified], [gzipped]).then()
 
 This is the primary function.
 
@@ -92,18 +84,25 @@ This is the primary function.
 
 `js` is the final JS bundle that you can serve to the client.
 
+You could also skip the `.build()` option and simply do `.then()`:
+
+```js
+polyfill(req.headers['user-agent']).then(function (js) {
+
+})
+```
+
 Example Express usage:
 
 ```js
 app.use(function (req, res) {
   if (req.path !== '/polyfills.js') return next()
 
-  co(polyfill(req.headers['user-agent']).build())(function (err, string) {
-    if (err) return next(err)
-
+  polyfill(req.headers['user-agent']).then(function (js) {
     res.set('Content-Type', 'application/javascript')
-    res.send(string)
-  })
+    res.set('Content-Length', Buffer.byteLength(js))
+    res.end(js)
+  }, next)
 })
 ```
 
