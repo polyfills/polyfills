@@ -8,6 +8,7 @@
     "native-or-bluebird": "1",
     "mkdirp": "0",
     "useragent": "2",
+    "semver": "2",
     "uglify-js": "2",
     "lru-cache": "2"
   },
@@ -16,13 +17,13 @@
     "cogent": "1",
     "mocha": "1",
     "rimraf": "2",
-    "istanbul-harmony": "0"
+    "istanbul": "0"
   },
   "scripts": {
     "update": "node --harmony-generators lib/install",
-    "test": "mocha --harmony-generators --reporter spec --bail",
-    "test-cov": "node --harmony-generators node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot",
-    "test-travis": "node --harmony-generators node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot"
+    "test": "mocha --reporter spec",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot"
   },
   "main": "lib",
   "author": {
