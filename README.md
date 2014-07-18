@@ -52,6 +52,7 @@ Until then, ES6 features will be included piecewise.
   - `window.Promise()`
 - [es-shims/es5-shim](https://github.com/es-shims/es5-shim)
 - All of [Mathias Bynens](https://github.com/mathiasbynens) and [Paul Miller](https://github.com/paulmillr)'s string and array polyfills
+
 ## Installation
 
 ```bash
