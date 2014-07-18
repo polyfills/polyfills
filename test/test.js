@@ -1,9 +1,9 @@
 
-var co = require('co')
 var fs = require('mz/fs')
 var path = require('path')
 var assert = require('assert')
 var decompress = require('mz/zlib').gunzip
+var Promise = require('native-or-bluebird')
 
 var polyfill
 
@@ -20,75 +20,89 @@ before(function () {
 
 describe('Polyfills', function () {
   describe('describing bundles', function () {
-    it('should allow specific inclusions', co(function* () {
+    it('should allow specific inclusions', function () {
       var p = require('..')({
         include: ['requestanimationframe']
       })
 
-      var out = yield* p(chrome).build()
-      assert(!out.trim())
-    }))
+      return p(chrome).then(function (out) {
+        assert(!out.trim())
+      })
+    })
 
-    it('should allow specific exclusions', co(function* () {
+    it('should allow specific exclusions', function () {
       var p = require('..')({
         exclude: ['domelements']
       })
 
-      var out = yield* p(chrome).build()
-      assert(!~out.indexOf('elementsPrototype.queryAll'))
-    }))
+      return p(chrome).then(function (out) {
+        assert(!~out.indexOf('elementsPrototype.queryAll'))
+      })
+    })
   })
 
   describe('building a bundle', function () {
     var p
 
-    it('should build', co(function* () {
+    it('should build', function () {
       p = polyfill(chrome)
-      var out = yield* p.build()
-      new Function(out) // make sure there are no syntax errors
-    }))
+      return p.then(function (out) {
+        new Function(out) // make sure there are no syntax errors
+      })
+    })
 
-    it('should minify', co(function* () {
-      var out = yield* polyfill(chrome).build(true)
-      new Function(out)
-      assert(!/\s{2,}/.test(out))
-    }))
+    it('should minify', function () {
+      return polyfill(chrome).build(true).then(function (out) {
+        new Function(out)
+        assert(!/\s{2,}/.test(out))
+      })
+    })
 
-    it('should gzip', co(function* () {
-      var gzipped = yield* polyfill(chrome).build(true, true)
-      var min = yield* polyfill(chrome).build(true, false)
-      assert.equal(min, yield decompress(gzipped))
-    }))
+    it('should gzip', function () {
+      return Promise.all([
+        polyfill(chrome).build(true, true),
+        polyfill(chrome).build(true, false),
+      ]).then(function (out) {
+        return decompress(out[0]).then(function (decompressed) {
+          assert.equal(out[1], decompressed)
+        })
+      })
+    })
 
-    it('should cache', co(function* () {
-      yield fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.js'))
-      yield fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.min.js'))
-    }))
+    it('should cache', function () {
+      return Promise.all([
+        fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.js')),
+        fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.min.js')),
+      ])
+    })
   })
 })
 
 describe('Browsers', function () {
   describe('IE8', function () {
-    it('should include ES5', co(function* () {
-      var out = yield* polyfill(ie8).build()
-      new Function(out)
-      assert(~out.indexOf('https://github.com/es-shims/es5-shim'))
-    }))
+    it('should include ES5', function () {
+      return polyfill(ie8).then(function (out) {
+        new Function(out)
+        assert(~out.indexOf('https://github.com/es-shims/es5-shim'))
+      })
+    })
   })
 
   describe('iOS 5.1', function () {
-    it('should include RAF', co(function* () {
-      var out = yield* polyfill(ios51).build()
-      new Function(out)
-      assert(~out.indexOf('requestAnimationFrame'))
-    }))
+    it('should include RAF', function () {
+      return polyfill(ios51).then(function (out) {
+        new Function(out)
+        assert(~out.indexOf('requestAnimationFrame'))
+      })
+    })
   })
 
   describe('Android 4.0.3', function () {
-    it('should include RAF', co(function* () {
-      var out = yield* polyfill(android403).build()
-      new Function(out)
-      assert(~out.indexOf('requestAnimationFrame'))
-    }))
+    it('should include RAF', function () {
+      return polyfill(android403).then(function (out) {
+        new Function(out)
+        assert(~out.indexOf('requestAnimationFrame'))
+      })
+    })
   })
 })
