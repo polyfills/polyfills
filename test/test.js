@@ -71,8 +71,8 @@ describe('Polyfills', function () {
 
     it('should cache', function () {
       return Promise.all([
-        fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.js')),
-        fs.stat(path.join(__dirname, '..', 'cache', p.hash + '.min.js')),
+        fs.stat(path.join(__dirname, '..', 'cache', 'polyfill.' + p.hash + '.js')),
+        fs.stat(path.join(__dirname, '..', 'cache', 'polyfill.' + p.hash + '.min.js')),
       ])
     })
   })
