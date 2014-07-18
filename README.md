@@ -6,20 +6,26 @@
 [![Test coverage][coveralls-image]][coveralls-url]
 [![Gittip][gittip-image]][gittip-url]
 
-A user-agent-based polyfill combinator.
-Create polyfill builds based on the client's browser and send only what's needed.
+Create polyfill builds based on the client's browser and serve only what's needed.
+This allows you to write modern JavaScript without worrying too much
+(you should still do due diligence) about browser support as well as
+not penalizing modern browsers with unnecessary polyfills.
 
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
 - Caches builds locally to a `cache/` folder.
 - Optionally minimizes builds (defaults to `true` in production).
 - Stores nothing in memory, allowing you to use it within your app with minimal overhead.
 
-This is based on [jonathantneal/polyfill](https://github.com/jonathantneal/polyfill),
-but it has a couple of different philosophies:
+This is simply the builder. For some middleware implementations for your app:
 
-- It does not use its own polyfills and instead uses well tested polyfill libraries instead.
-- It does not try to optimize bundle sizes.
-- It does not use its own user agent parsing.
+- [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa) - supports SPDY pushing the polyfills as well.
+
+This is inspired by [jonathantneal/polyfill](https://github.com/jonathantneal/polyfill)
+but has a couple of different philosophies:
+
+- It does not use its own polyfills and instead uses well tested polyfill libraries.
+- It does not attempt to optimize bundle sizes.
+- It does not use its own user agent parser.
 
 This library will only use small, well tested polyfills.
 The only exceptions are `ECMAScript` bundles such as [es5-shim](https://github.com/es-shims/es5-shim).
@@ -64,9 +70,7 @@ npm install polyfills
 ### var polyfill = Polyfills([options])
 
 ```js
-var polyfill = require('polyfills')({
-  include: []
-})
+var polyfill = require('polyfills')()
 ```
 
 Return a new instance of `polyfill` based on `options`.
@@ -74,17 +78,17 @@ Return a new instance of `polyfill` based on `options`.
 - `include` - which polyfills to include.
   This is an __inclusive__ list.
   The names are included in [lib/polyfills.js](lib/polyfills.js).
-- `cache` - folder to cache polyfill bundles.
+- `exclude` - conversely, you can exclude specific polyfills.
+- `cache` - folder to cache polyfill bundles. Defaults to this module's `cache/` folder.
 
-### polyfill(useragent).build([minified], [gzipped]).then()
+### polyfill(useragent).build([minified], [gzipped]).then(js => )
 
-This is the primary function.
+Build and cache the bundle.
 
 - `minified` - defaults to `process.env.NODE_ENV === 'production'`
-- `gzipped` - whether to return a compressed buffer instead of a string.
+- `gzipped` - whether to return a compressed buffer instead of a string (it's always compressed and cached anyways).
 
 `js` is the final JS bundle that you can serve to the client.
-
 You could also skip the `.build()` option and simply do `.then()`:
 
 ```js
