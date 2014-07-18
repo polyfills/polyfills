@@ -1,8 +1,7 @@
-/*! http://mths.be/contains v0.2.0 by @mathias */
-if (!String.prototype.contains) {
+/*! http://mths.be/startswith v0.2.0 by @mathias */
+if (!String.prototype.startsWith) {
 	(function() {
 		'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
-		var toString = {}.toString;
 		var defineProperty = (function() {
 			// IE 8 only supports `Object.defineProperty` on DOM elements
 			try {
@@ -12,8 +11,8 @@ if (!String.prototype.contains) {
 			} catch(error) {}
 			return result;
 		}());
-		var indexOf = ''.indexOf;
-		var contains = function(search) {
+		var toString = {}.toString;
+		var startsWith = function(search) {
 			if (this == null) {
 				throw TypeError();
 			}
@@ -35,16 +34,22 @@ if (!String.prototype.contains) {
 			if (searchLength + start > stringLength) {
 				return false;
 			}
-			return indexOf.call(string, searchString, pos) != -1;
+			var index = -1;
+			while (++index < searchLength) {
+				if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
+					return false;
+				}
+			}
+			return true;
 		};
 		if (defineProperty) {
-			defineProperty(String.prototype, 'contains', {
-				'value': contains,
+			defineProperty(String.prototype, 'startsWith', {
+				'value': startsWith,
 				'configurable': true,
 				'writable': true
 			});
 		} else {
-			String.prototype.contains = contains;
+			String.prototype.startsWith = startsWith;
 		}
 	}());
 }
