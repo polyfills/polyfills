@@ -1,12 +1,11 @@
 {
   "name": "polyfills",
   "description": "user-agent-based polyfill combinator",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "dependencies": {
     "mz": "1",
     "bluebird": "2",
     "native-or-bluebird": "1",
-
     "mkdirp": "0",
     "useragent": "2",
     "uglify-js": "2",
