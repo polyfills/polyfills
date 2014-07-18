@@ -11,17 +11,15 @@
     "useragent": "2",
     "uglify-js": "2",
     "lru-cache": "2",
-    "node-zopfli": "1",
     "generator-supported": "0"
   },
   "devDependencies": {
     "cogent": "1",
     "mocha": "1",
-    "should": "4",
     "rimraf": "2"
   },
   "scripts": {
-    "test": "mocha --harmony-generators --require should --reporter spec --bail",
+    "test": "mocha --harmony-generators --reporter spec",
     "update": "node --harmony-generators lib/install"
   },
   "main": "lib",
