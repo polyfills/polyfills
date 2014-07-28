@@ -6,9 +6,9 @@ var rimraf = require('rimraf')
 var mkdirp = require('mkdirp')
 var request = require('cogent')
 
-var polyfills = require('./polyfills')
+var polyfills = require('./lib/polyfills')
 
-var out = path.join(__dirname, '..', 'polyfills')
+var out = path.join(__dirname, 'polyfills')
 
 rimraf.sync(out)
 mkdirp.sync(out)
