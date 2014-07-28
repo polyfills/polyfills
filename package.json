@@ -6,9 +6,13 @@
     "mz": "1",
     "bluebird": "2",
     "native-or-bluebird": "1",
+
     "mkdirp": "0",
+    "rimraf": "2",
+
     "useragent": "2",
     "semver": "2",
+
     "uglify-js": "2",
     "lru-cache": "2"
   },
@@ -16,12 +20,11 @@
     "co": "3",
     "cogent": "1",
     "mocha": "1",
-    "rimraf": "2",
     "istanbul": "0"
   },
   "scripts": {
     "update": "node --harmony-generators install",
-    "test": "mocha --reporter spec",
+    "test": "mocha --reporter spec --bail",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot"
   },

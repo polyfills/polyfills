@@ -13,7 +13,7 @@ not penalizing modern browsers with unnecessary polyfills.
 
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
 - Caches builds locally to a `cache/` folder.
-- Optionally minimizes builds (defaults to `true` in production).
+- Creates minified and gzipped builds.
 - Stores nothing in memory, allowing you to use it within your app with minimal overhead.
 
 This is simply the builder. For some middleware implementations for your app:
@@ -81,21 +81,30 @@ Return a new instance of `polyfill` based on `options`.
 - `exclude` - conversely, you can exclude specific polyfills.
 - `cache` - folder to cache polyfill bundles. Defaults to this module's `cache/` folder.
 
-### polyfill(useragent).build([minified], [gzipped]).then(js => )
+### polyfill.clean()
 
-Build and cache the bundle.
+Clean all the bundles from the cache.
 
-- `minified` - defaults to `process.env.NODE_ENV === 'production'`
-- `gzipped` - whether to return a compressed buffer instead of a string (it's always compressed and cached anyways).
+### polyfill(useragent).then( data => )
 
-`js` is the final JS bundle that you can serve to the client.
-You could also skip the `.build()` option and simply do `.then()`:
+Build and cache the bundle. Returns data with:
 
-```js
-polyfill(req.headers['user-agent']).then(function (js) {
+- `name` - the name of the build
+- `date` - the date this build was created for `Last-Modified` headers
+- `hash` - a `sha256` sha sum of the JS file in `hex` encoding for `ETag` headers
+- `polyfills[]` - an array of all the polyfill names used
+- `length[extension]` - the byte size of each build for `Content-Length` headers
 
-})
-```
+If no transforms were used, then `name === hash` and `hash === ecstacy.hash`.
+The possible extensions are:
+
+- `.json` - the returns data
+- `.js`
+- `.js.gz`
+- `.min.js`
+- `.min.js.gz`
+
+### polyfill.read(name, ext).then( buf => )
 
 Example Express usage:
 
@@ -103,10 +112,20 @@ Example Express usage:
 app.use(function (req, res) {
   if (req.path !== '/polyfills.js') return next()
 
-  polyfill(req.headers['user-agent']).then(function (js) {
-    res.set('Content-Type', 'application/javascript')
-    res.set('Content-Length', Buffer.byteLength(js))
-    res.end(js)
+  polyfill(req.headers['user-agent']).then(function (data) {
+    return polyfill.read(data.name, '.min.js.gz')
+  }).then(function (buf) {
+    res.setHeader('Content-Encoding', 'gzip')
+    res.setHeader('Content-Length', buf.length)
+    res.setHeader('Content-Type', 'application/javascript')
+    res.setHeader('ETag', '"' + data.hash + '"')
+    res.setHeader('Last-Modified', data.date.toUTCString())
+    if (req.fresh) {
+      res.statusCode = 304
+      res.end()
+    } else {
+      res.end(buf)
+    }
   }, next)
 })
 ```
