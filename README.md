@@ -135,8 +135,7 @@ app.use(function (req, res) {
 
 ## Adding polyfills
 
-Feel free to create PRs to add polyfills.
-Checkout [lib/polyfills.js](lib/polyfills.js) to see what is needed.
+Checkout [polyfills/db](https://github.com/polyfills/db).
 
 [npm-image]: https://img.shields.io/npm/v/polyfills.svg?style=flat
 [npm-url]: https://npmjs.org/package/polyfills
