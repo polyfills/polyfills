@@ -15,6 +15,7 @@ not penalizing modern browsers with unnecessary polyfills.
 - Caches builds locally to a `cache/` folder.
 - Creates minified and gzipped builds.
 - Stores nothing in memory, allowing you to use it within your app with minimal overhead.
+- `Last-Modified` and `ETag` header support.
 
 This is simply the builder. For some middleware implementations for your app:
 
@@ -23,7 +24,7 @@ This is simply the builder. For some middleware implementations for your app:
 This is inspired by [jonathantneal/polyfill](https://github.com/jonathantneal/polyfill)
 but has a couple of different philosophies:
 
-- It does not use its own polyfills and instead uses well tested polyfill libraries.
+- It does not use its own polyfills and instead uses well-tested 3rd party polyfills.
 - It does not attempt to optimize bundle sizes.
 - It does not use its own user agent parser.
 
@@ -77,7 +78,7 @@ Return a new instance of `polyfill` based on `options`.
 
 - `include` - which polyfills to include.
   This is an __inclusive__ list.
-  The names are included in [lib/polyfills.js](lib/polyfills.js).
+  The names are included in [polyfills/db](https://github.com/polyfills/db/blob/master/lib/polyfills.js).
 - `exclude` - conversely, you can exclude specific polyfills.
 - `cache` - folder to cache polyfill bundles. Defaults to this module's `cache/` folder.
 
@@ -95,7 +96,6 @@ Build and cache the bundle. Returns data with:
 - `polyfills[]` - an array of all the polyfill names used
 - `length[extension]` - the byte size of each build for `Content-Length` headers
 
-If no transforms were used, then `name === hash` and `hash === ecstacy.hash`.
 The possible extensions are:
 
 - `.json` - the returns data
@@ -113,19 +113,22 @@ app.use(function (req, res) {
   if (req.path !== '/polyfills.js') return next()
 
   polyfill(req.headers['user-agent']).then(function (data) {
-    return polyfill.read(data.name, '.min.js.gz')
-  }).then(function (buf) {
+    // you probably want to do content negotiation here
     res.setHeader('Content-Encoding', 'gzip')
-    res.setHeader('Content-Length', buf.length)
+    res.setHeader('Content-Length', data.length['.min.js.gz'])
     res.setHeader('Content-Type', 'application/javascript')
     res.setHeader('ETag', '"' + data.hash + '"')
     res.setHeader('Last-Modified', data.date.toUTCString())
+    
     if (req.fresh) {
       res.statusCode = 304
       res.end()
-    } else {
-      res.end(buf)
+      return
     }
+    
+    return polyfill.read(data.name, '.min.js.gz').then(function (buf) {
+      res.end(buf)
+    })
   }, next)
 })
 ```
