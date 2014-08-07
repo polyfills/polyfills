@@ -129,7 +129,7 @@ app.use(function (req, res) {
     return polyfill.read(data.name, '.min.js.gz').then(function (buf) {
       res.end(buf)
     })
-  }, next)
+  }).catch(next)
 })
 ```
 
