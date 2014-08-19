@@ -10,7 +10,7 @@
     "rimraf": "2",
     "useragent": "2",
     "semver": "3",
-    "polyfills-db": "0",
+    "polyfills-db": "1",
     "uglify-js": "2",
     "lru-cache": "2"
   },
