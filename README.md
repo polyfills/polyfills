@@ -2,14 +2,19 @@
 # Polyfills
 
 [![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
+[![Build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
+[![Dependency Status][david-image]][david-url]
+[![License][license-image]][license-url]
+[![Downloads][downloads-image]][downloads-url]
 [![Gittip][gittip-image]][gittip-url]
 
 Create polyfill builds based on the client's browser and serve only what's needed.
 This allows you to write modern JavaScript without worrying too much
 (you should still do due diligence) about browser support as well as
 not penalizing modern browsers with unnecessary polyfills.
+
+Want to see an example? Go to: https://nlz.io/polyfill.js
 
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
 - Caches builds locally to a `cache/` folder.
@@ -119,13 +124,13 @@ app.use(function (req, res) {
     res.setHeader('Content-Type', 'application/javascript')
     res.setHeader('ETag', '"' + data.hash + '"')
     res.setHeader('Last-Modified', data.date.toUTCString())
-    
+
     if (req.fresh) {
       res.statusCode = 304
       res.end()
       return
     }
-    
+
     return polyfill.read(data.name, '.min.js.gz').then(function (buf) {
       res.end(buf)
     })
@@ -137,11 +142,19 @@ app.use(function (req, res) {
 
 Checkout [polyfills/db](https://github.com/polyfills/db).
 
-[npm-image]: https://img.shields.io/npm/v/polyfills.svg?style=flat
+[npm-image]: https://img.shields.io/npm/v/polyfills.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/polyfills
-[travis-image]: https://img.shields.io/travis/polyfills/polyfills.svg?style=flat
+[github-tag]: http://img.shields.io/github/tag/polyfills/polyfills.svg?style=flat-square
+[github-url]: https://github.com/polyfills/polyfills/tags
+[travis-image]: https://img.shields.io/travis/polyfills/polyfills.svg?style=flat-square
 [travis-url]: https://travis-ci.org/polyfills/polyfills
-[coveralls-image]: https://img.shields.io/coveralls/polyfills/polyfills.svg?style=flat
+[coveralls-image]: https://img.shields.io/coveralls/polyfills/polyfills.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/polyfills/polyfills?branch=master
-[gittip-image]: https://img.shields.io/gittip/jonathanong.svg?style=flat
+[david-image]: http://img.shields.io/david/polyfills/polyfills.svg?style=flat-square
+[david-url]: https://david-dm.org/polyfills/polyfills
+[license-image]: http://img.shields.io/npm/l/polyfills.svg?style=flat-square
+[license-url]: LICENSE
+[downloads-image]: http://img.shields.io/npm/dm/polyfills.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/polyfills
+[gittip-image]: https://img.shields.io/gittip/jonathanong.svg?style=flat-square
 [gittip-url]: https://www.gittip.com/jonathanong/

@@ -1,6 +1,5 @@
 
 var co = require('co')
-var fs = require('mz/fs')
 var path = require('path')
 var rimraf = require('rimraf')
 var mkdirp = require('mkdirp')

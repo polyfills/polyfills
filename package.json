@@ -34,5 +34,19 @@
     "twitter": "https://twitter.com/jongleberry"
   },
   "repository": "polyfills/polyfills",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [
+    "polyfill",
+    "polyfills",
+    "combinator",
+    "user-agent",
+    "useragent",
+    "bundle",
+    "js",
+    "javascript"
+  ],
+  "files": [
+    "lib",
+    "polyfills"
+  ]
 }
