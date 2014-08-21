@@ -41,6 +41,14 @@ describe('Polyfills(options)', function () {
   describe('polyfill(useragent)', function () {
     var data
 
+    it('.catch().then()', function () {
+      return polyfill(ie8).catch(function (err) {
+        throw err
+      }).then(function () {
+        
+      })
+    })
+
     it('.then( data => )', function () {
       return polyfill(chrome).then(function (data) {
         return polyfill(chrome)
