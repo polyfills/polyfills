@@ -22,9 +22,9 @@
   },
   "scripts": {
     "update": "node --harmony-generators install",
-    "test": "mocha --reporter spec --bail",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot",
-    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot"
+    "test": "mocha --reporter spec --bail --timeout 10s",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --timeout 10s",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot --timeout 10s"
   },
   "main": "lib",
   "author": {
