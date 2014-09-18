@@ -3,6 +3,7 @@
   "description": "user-agent-based polyfill combinator",
   "version": "1.2.0",
   "dependencies": {
+    "debug": "*",
     "mz": "1",
     "bluebird": "2",
     "native-or-bluebird": "1",
