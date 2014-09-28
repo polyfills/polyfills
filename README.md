@@ -14,29 +14,31 @@ This allows you to write modern JavaScript without worrying too much
 (you should still do due diligence) about browser support as well as
 not penalizing modern browsers with unnecessary polyfills.
 
-Want to see an example? Go to: https://nlz.io/polyfill.js
+This library is merely the "logic" and does not handle any HTTP serving.
+It essentially does the following:
 
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
-- Caches builds locally to a `cache/` folder.
+- Caches builds locally.
 - Creates minified and gzipped builds.
-- Stores nothing in memory, allowing you to use it within your app with minimal overhead.
-- `Last-Modified` and `ETag` header support.
+- Returns metadata for the `Content-Length` and `ETag` headers.
 
-This is simply the builder. For some middleware implementations for your app:
+It also stores nothing in memory, making it suitable for production usage within existing node apps.
 
-- [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa) - supports SPDY pushing the polyfills as well.
+For some middleware implementations for your favorite node.js framework:
+
+- [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa).
+- [polyfills-middleware](https://github.com/polyfills/middleware) for Connect, Express, Restify, etc.
 
 This is inspired by [jonathantneal/polyfill](https://github.com/jonathantneal/polyfill)
 but has a couple of different philosophies:
 
 - It does not use its own polyfills and instead uses well-tested 3rd party polyfills.
+  All polyfills are tracked in [polyfills-db](https://github.com/polyfills/db).
 - It does not attempt to optimize bundle sizes.
 - It does not use its own user agent parser.
 
 This library will only use small, well tested polyfills.
-The only exceptions are `ECMAScript` bundles such as [es5-shim](https://github.com/es-shims/es5-shim).
-An ES6 shim will be included once ES6 is finalized and a majority of browsers support all ES6 features.
-Until then, ES6 features will be included piecewise.
+The only exceptions are `ECMAScript` bundles such as [es5-shim](https://github.com/es-shims/es5-shim)
 
 ## Included Polyfills
 
@@ -111,7 +113,7 @@ The possible extensions are:
 
 ### polyfill.read(name, ext).then( buf => )
 
-Example Express usage:
+Example Express usage (don't use this code, use [polyfills-middleware](https://github.com/polyfills/middleware) instead):
 
 ```js
 app.use(function (req, res) {
@@ -123,7 +125,6 @@ app.use(function (req, res) {
     res.setHeader('Content-Length', data.length['.min.js.gz'])
     res.setHeader('Content-Type', 'application/javascript')
     res.setHeader('ETag', '"' + data.hash + '"')
-    res.setHeader('Last-Modified', data.date.toUTCString())
 
     if (req.fresh) {
       res.statusCode = 304
