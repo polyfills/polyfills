@@ -45,7 +45,7 @@ describe('Polyfills(options)', function () {
       return polyfill(ie8).catch(function (err) {
         throw err
       }).then(function () {
-        
+
       })
     })
 
@@ -64,6 +64,13 @@ describe('Polyfills(options)', function () {
       return polyfill.read(data.name, '.js').then(function (out) {
         new Function(out.toString())
       })
+    })
+
+    it('.stream(name, .js)', function (done) {
+      return polyfill.stream(data.name, '.js')
+        .on('error', done)
+        .on('end', done)
+        .resume()
     })
 
     it('.read(name, .min.js)', function () {

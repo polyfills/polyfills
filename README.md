@@ -20,7 +20,8 @@ It essentially does the following:
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
 - Caches builds locally.
 - Creates minified and gzipped builds.
-- Returns metadata for the `Content-Length` and `ETag` headers.
+- Returns metadata for the `Content-Encoding`, `Content-Length` and `ETag` headers.
+- Allows you to choose between which build you'd like and whether to read it or stream it.
 
 It also stores nothing in memory, making it suitable for production usage within existing node apps.
 
