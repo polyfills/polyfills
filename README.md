@@ -24,10 +24,18 @@ It essentially does the following:
 
 It also stores nothing in memory, making it suitable for production usage within existing node apps.
 
-For some middleware implementations for your favorite node.js framework:
+## Middleware
+
+For some middleware implementations for your favorite node.js frameworks:
 
 - [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa).
 - [polyfills-middleware](https://github.com/polyfills/middleware) for Connect, Express, Restify, etc.
+
+The idea behind polyfills is to SPDY or HTTP2 push the relevant polyfill bundle to the client.
+It's not really worth it otherwise due to the additional HTTP request (and DNS lookup if you're using a CDN).
+These middleware support SPDY/HTTP2 push.
+
+## Inspiration
 
 This is inspired by [jonathantneal/polyfill](https://github.com/jonathantneal/polyfill)
 but has a couple of different philosophies:
