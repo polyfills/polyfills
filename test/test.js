@@ -85,6 +85,33 @@ describe('Polyfills(options)', function () {
       return polyfill.read(data.name, '.min.js.gz')
     })
   })
+
+  describe('.select(json, minify, gzip)', function () {
+    var json = {
+      length: {
+        '.min.js': 900,
+        '.min.js.gz': 500,
+        '.js': 2000,
+        '.js.gz': 800,
+      },
+    }
+
+    it('({}, true, true)', function () {
+      assert.deepEqual(polyfill.select(json, true, true), ['.min.js.gz', true])
+    })
+
+    it('({}, false, true)', function () {
+      assert.deepEqual(polyfill.select(json, false, true), ['.js.gz', true])
+    })
+
+    it('({}, true, false)', function () {
+      assert.deepEqual(polyfill.select(json, true, false), ['.min.js', false])
+    })
+
+    it('({}, false, false)', function () {
+      assert.deepEqual(polyfill.select(json, false, false), ['.js', false])
+    })
+  })
 })
 
 /*
