@@ -14,6 +14,53 @@ This allows you to write modern JavaScript without worrying too much
 (you should still do due diligence) about browser support as well as
 not penalizing modern browsers with unnecessary polyfills.
 
+## Idea
+
+You want to use [promises](http://caniuse.com/#feat=promises),
+but some browsers, particularly IE, do not support it yet.
+You don't want browsers that already support promises to download a promise implementation.
+`polyfills` will detect whether the client supports promises and
+send the promise polyfill if it does not.
+
+Here's how you'd implement it in Express:
+
+```js
+app.use(require('polyfills-middleware')({
+  // only bundle the polyfills that you want
+  include: ['promise']
+}))
+```
+
+```html
+<script src="/polyfill.js"></script><!-- the polyfill bundle -->
+<script src="/bundle.js"></script><!-- my JS bundle -->
+```
+
+However, this will slow down your site a little because
+it requires an additional HTTP request.
+Polyfill middleware supports SPDY push to avoid this roundtrip.
+
+```js
+app.use(require('polyfills-middleware')());
+
+app.get('/index.html', function (req, res, next) {
+  if (!res.isSpdy) return res.render('index');;
+
+  res.polyfills.push().then(function () {
+    res.render('index');
+  }).catch(next);
+});
+```
+
+## Middleware
+
+For some middleware implementations for your favorite node.js frameworks w/ SPDY push support:
+
+- [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa).
+- [polyfills-middleware](https://github.com/polyfills/middleware) for Connect, Express, Restify, etc.
+
+## Description
+
 This library is merely the "logic" and does not handle any HTTP serving.
 It essentially does the following:
 
@@ -24,17 +71,6 @@ It essentially does the following:
 - Allows you to choose between which build you'd like and whether to read it or stream it.
 
 It also stores nothing in memory, making it suitable for production usage within existing node apps.
-
-## Middleware
-
-For some middleware implementations for your favorite node.js frameworks:
-
-- [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa).
-- [polyfills-middleware](https://github.com/polyfills/middleware) for Connect, Express, Restify, etc.
-
-The idea behind polyfills is to SPDY or HTTP2 push the relevant polyfill bundle to the client.
-It's not really worth it otherwise due to the additional HTTP request (and DNS lookup if you're using a CDN).
-These middleware support SPDY/HTTP2 push.
 
 ## Inspiration
 
