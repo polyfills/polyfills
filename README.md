@@ -13,51 +13,7 @@ Create polyfill builds based on the client's browser and serve only what's neede
 This allows you to write modern JavaScript without worrying too much
 (you should still do due diligence) about browser support as well as
 not penalizing modern browsers with unnecessary polyfills.
-
-## Idea
-
-You want to use [promises](http://caniuse.com/#feat=promises),
-but some browsers, particularly IE, do not support it yet.
-You don't want browsers that already support promises to download a promise implementation.
-`polyfills` will detect whether the client supports promises and
-send the promise polyfill if it does not.
-
-Here's how you'd implement it in Express:
-
-```js
-app.use(require('polyfills-middleware')({
-  // only bundle the polyfills that you want
-  include: ['promise']
-}))
-```
-
-```html
-<script src="/polyfill.js"></script><!-- the polyfill bundle -->
-<script src="/bundle.js"></script><!-- my JS bundle -->
-```
-
-However, this will slow down your site a little because
-it requires an additional HTTP request.
-Polyfill middleware supports SPDY push to avoid this roundtrip.
-
-```js
-app.use(require('polyfills-middleware')());
-
-app.get('/index.html', function (req, res, next) {
-  if (!res.isSpdy) return res.render('index');;
-
-  res.polyfills.push().then(function () {
-    res.render('index');
-  }).catch(next);
-});
-```
-
-## Middleware
-
-For some middleware implementations for your favorite node.js frameworks w/ SPDY push support:
-
-- [koa-polyfills](https://github.com/polyfills/koa) for [koa](https://github.com/koajs/koa).
-- [polyfills-middleware](https://github.com/polyfills/middleware) for Connect, Express, Restify, etc.
+See https://polyfills.github.io for more details.
 
 ## Description
 
@@ -71,46 +27,6 @@ It essentially does the following:
 - Allows you to choose between which build you'd like and whether to read it or stream it.
 
 It also stores nothing in memory, making it suitable for production usage within existing node apps.
-
-## Inspiration
-
-This is inspired by [jonathantneal/polyfill](https://github.com/jonathantneal/polyfill)
-but has a couple of different philosophies:
-
-- It does not use its own polyfills and instead uses well-tested 3rd party polyfills.
-  All polyfills are tracked in [polyfills-db](https://github.com/polyfills/db).
-- It does not attempt to optimize bundle sizes.
-- It does not use its own user agent parser.
-
-This library will only use small, well tested polyfills.
-The only exceptions are `ECMAScript` bundles such as [es5-shim](https://github.com/es-shims/es5-shim)
-
-## Included Polyfills
-
-- [barberyboy/dom-elements](https://github.com/barberboy/dom-elements)
-  - `Element.prototype.query()`
-  - `Element.prototype.queryAll()`
-- [webreflection/dom4](https://github.com/webreflection/dom4)
-  - `Element.prototype.prepend()`
-  - `Element.prototype.append()`
-  - `Element.prototype.before()`
-  - `Element.prototype.after()`
-  - `Element.prototype.replace()`
-  - `Element.prototype.remove()`
-  - `Element.prototype.matches()`
-  - `Element.prototype.classList`
-- [darius/requestAnimationFrame](https://github.com/darius/requestAnimationFrame)
-  - `window.requestAnimationFrame()`
-  - `window.cancelAnimationFrame()`
-- [YuzuJS/setImmediate](https://github.com/YuzuJS/setImmediate)
-  - `window.setImmediate()`
-  - `window.clearImmediate()`
-- [Yaffle/EventSource](https://github.com/Yaffle/EventSource)
-  - `window.EventSource`
-- [jakearchibald/es6-promise](https://github.com/jakearchibald/es6-promise)
-  - `window.Promise()`
-- [es-shims/es5-shim](https://github.com/es-shims/es5-shim)
-- All of [Mathias Bynens](https://github.com/mathiasbynens) and [Paul Miller](https://github.com/paulmillr)'s various polyfills
 
 ## Installation
 
@@ -132,7 +48,6 @@ Return a new instance of `polyfill` based on `options`.
   This is an __inclusive__ list.
   The names are included in [polyfills/db](https://github.com/polyfills/db/blob/master/lib/polyfills.js).
 - `exclude` - conversely, you can exclude specific polyfills.
-- `cache` - folder to cache polyfill bundles. Defaults to this module's `cache/` folder.
 
 ### polyfill.clean()
 
@@ -143,46 +58,29 @@ Clean all the bundles from the cache.
 Build and cache the bundle. Returns data with:
 
 - `name` - the name of the build
-- `date` - the date this build was created for `Last-Modified` headers
-- `hash` - a `sha256` sha sum of the JS file in `hex` encoding for `ETag` headers
-- `polyfills[]` - an array of all the polyfill names used
+- `hash` - a `sha256` sha sum of the JS file for `ETag` headers
+- `polyfills[]` - an array of all the polyfills' names used
 - `length[extension]` - the byte size of each build for `Content-Length` headers
 
 The possible extensions are:
 
-- `.json` - the returns data
+- `.json` - where the metadata is stored
 - `.js`
 - `.js.gz`
 - `.min.js`
 - `.min.js.gz`
 
-### polyfill.read(name, ext).then( buf => )
+### polyfill.read(name, ext, [encoding]).then( buf => )
 
-Example Express usage (don't use this code, use [polyfills-middleware](https://github.com/polyfills/middleware) instead):
+Read a bundle.
 
-```js
-app.use(function (req, res) {
-  if (req.path !== '/polyfills.js') return next()
+### var stream = polyfill.stream(name, ext)
 
-  polyfill(req.headers['user-agent']).then(function (data) {
-    // you probably want to do content negotiation here
-    res.setHeader('Content-Encoding', 'gzip')
-    res.setHeader('Content-Length', data.length['.min.js.gz'])
-    res.setHeader('Content-Type', 'application/javascript')
-    res.setHeader('ETag', '"' + data.hash + '"')
+Stream a bundle.
 
-    if (req.fresh) {
-      res.statusCode = 304
-      res.end()
-      return
-    }
+### var filename = polyfill.pathOf(name, ext)
 
-    return polyfill.read(data.name, '.min.js.gz').then(function (buf) {
-      res.end(buf)
-    })
-  }).catch(next)
-})
-```
+Get the filename of a bundle.
 
 ## Adding polyfills
 
