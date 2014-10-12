@@ -77,7 +77,6 @@ describe('Polyfills(options)', function () {
       return polyfill.read(data.name, '.min.js').then(function (out) {
         out = out.toString()
         new Function(out)
-        assert(!/\s{2,}/.test(out))
       })
     })
 
@@ -125,13 +124,14 @@ return polyfill().then(function (data) {
 
 describe('Browsers', function () {
   describe('IE8', function () {
-    it('should include ES5', function () {
+    it('should include ES5 and ES6', function () {
       return polyfill(ie8).then(function (data) {
         return polyfill.read(data.name, '.js')
       }).then(function (out) {
         out = out.toString()
         new Function(out)
         assert(~out.indexOf('https://github.com/es-shims/es5-shim'))
+        assert(~out.indexOf('https://github.com/paulmillr/es6-shim'))
       })
     })
   })

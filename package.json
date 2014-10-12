@@ -11,7 +11,7 @@
     "rimraf": "2",
     "useragent": "2",
     "semver": "4",
-    "polyfills-db": "1",
+    "polyfills-db": "^1.10.0",
     "uglify-js": "2",
     "lru-cache": "2"
   },
