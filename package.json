@@ -1,7 +1,7 @@
 {
   "name": "polyfills",
   "description": "user-agent-based polyfill combinator",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "dependencies": {
     "debug": "*",
     "mz": "1",
