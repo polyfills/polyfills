@@ -2,7 +2,7 @@
   * https://github.com/paulmillr/es6-shim
   * @license es6-shim Copyright 2013-2014 by Paul Miller (http://paulmillr.com)
   *   and contributors,  MIT License
-  * es6-shim: v0.19.0
+  * es6-shim: v0.19.1
   * see https://github.com/paulmillr/es6-shim/blob/master/LICENSE
   * Details and documentation:
   * https://github.com/paulmillr/es6-shim/
@@ -1724,6 +1724,7 @@
               entry.prev.next = entry;
               entry.next.prev = entry;
               this._size += 1;
+              return this;
             },
 
             'delete': function (key) {
@@ -1878,7 +1879,8 @@
                 return;
               }
               ensureMap(this);
-              return this['[[SetData]]'].set(key, key);
+              this['[[SetData]]'].set(key, key);
+              return this;
             },
 
             'delete': function (key) {

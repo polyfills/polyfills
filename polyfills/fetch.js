@@ -61,6 +61,13 @@
     })
   }
 
+  function consumed(body) {
+    if (body.bodyUsed) {
+      return new Promise.reject(new TypeError('Body already consumed'))
+    }
+    body.bodyUsed = true
+  }
+
   function Body() {
     this.body = null
     this.bodyUsed = false
@@ -70,14 +77,20 @@
     }
 
     this.blob = function() {
-      return Promise.resolve(new Blob([this.body]))
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(new Blob([this.body]))
     }
 
     this.formData = function() {
-      throw new Error('Not implemented yet')
+      return Promise.resolve(decode(this.body))
     }
 
     this.json = function() {
+      var rejected = consumed(this)
+      if (rejected) {
+        return rejected
+      }
+
       var body = this.body
       return new Promise(function(resolve, reject) {
         try {
@@ -89,7 +102,8 @@
     }
 
     this.text = function() {
-      return Promise.resolve(this.body)
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(this.body)
     }
 
     return this
@@ -113,6 +127,19 @@
       var value = (params[name] === null) ? '' : params[name]
       return encodeURIComponent(name) + '=' + encodeURIComponent(value)
     }).join('&').replace(/%20/g, '+')
+  }
+
+  function decode(body) {
+    var form = new FormData()
+    body.trim().split('&').forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+    return form
   }
 
   function isObject(value) {
