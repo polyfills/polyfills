@@ -32,7 +32,7 @@
     list.push(value)
   }
 
-  Headers.prototype.delete = function(name) {
+  Headers.prototype['delete'] = function(name) {
     delete this.map[name]
   }
 
@@ -63,7 +63,7 @@
 
   function consumed(body) {
     if (body.bodyUsed) {
-      return new Promise.reject(new TypeError('Body already consumed'))
+      return Promise.reject(new TypeError('Body already consumed'))
     }
     body.bodyUsed = true
   }
@@ -215,4 +215,4 @@
   window.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
-})()
+})();
