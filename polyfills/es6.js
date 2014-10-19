@@ -69,7 +69,7 @@
     var ArrayIterator; // make our implementation private
 
     var defineProperty = function (object, name, value, force) {
-      if (!force && name in object) return;
+      if (!force && name in object) { return; }
       if (supportsDescriptors) {
         Object.defineProperty(object, name, {
           configurable: true,
@@ -97,7 +97,7 @@
       function Type() {}
       Type.prototype = prototype;
       var object = new Type();
-      if (typeof properties !== "undefined") {
+      if (typeof properties !== 'undefined') {
         defineProperties(object, properties);
       }
       return object;
@@ -145,7 +145,7 @@
     };
 
     var emulateES6construct = function (o) {
-      if (!ES.TypeIsObject(o)) throw new TypeError('bad object');
+      if (!ES.TypeIsObject(o)) { throw new TypeError('bad object'); }
       // es5 approximation to es6 subclass semantics: in es6, 'new Foo'
       // would invoke Foo.@@create to allocation/initialize the new object.
       // In es5 we just get the plain object.  So if we detect an
@@ -162,8 +162,9 @@
     var ES = {
       CheckObjectCoercible: function (x, optMessage) {
         /* jshint eqnull:true */
-        if (x == null)
-          throw new TypeError(optMessage || ('Cannot call method on ' + x));
+        if (x == null) {
+          throw new TypeError(optMessage || 'Cannot call method on ' + x);
+        }
         return x;
       },
 
@@ -194,22 +195,22 @@
 
       ToInteger: function (value) {
         var number = +value;
-        if (Number.isNaN(number)) return 0;
-        if (number === 0 || !Number.isFinite(number)) return number;
+        if (Number.isNaN(number)) { return 0; }
+        if (number === 0 || !Number.isFinite(number)) { return number; }
         return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
       },
 
       ToLength: function (value) {
         var len = ES.ToInteger(value);
-        if (len <= 0) return 0; // includes converting -0 to +0
-        if (len > Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
+        if (len <= 0) { return 0; } // includes converting -0 to +0
+        if (len > Number.MAX_SAFE_INTEGER) { return Number.MAX_SAFE_INTEGER; }
         return len;
       },
 
       SameValue: function (a, b) {
         if (a === b) {
           // 0 === -0, but they are not identical.
-          if (a === 0) return 1 / a === 1 / b;
+          if (a === 0) { return 1 / a === 1 / b; }
           return true;
         }
         return Number.isNaN(a) && Number.isNaN(b);
@@ -228,7 +229,7 @@
       GetIterator: function (o) {
         if (isArguments(o)) {
           // special case support for `arguments`
-          return new ArrayIterator(o, "value");
+          return new ArrayIterator(o, 'value');
         }
         var it = o[$iterator$]();
         if (!ES.TypeIsObject(it)) {
@@ -470,8 +471,8 @@
       // Perf: http://jsperf.com/string-repeat2/2
       repeat: (function () {
         var repeat = function (s, times) {
-          if (times < 1) return '';
-          if (times % 2) return repeat(s, times - 1) + s;
+          if (times < 1) { return ''; }
+          if (times % 2) { return repeat(s, times - 1) + s; }
           var half = repeat(s, times / 2);
           return half + half;
         };
@@ -488,7 +489,9 @@
 
       startsWith: function (searchStr) {
         var thisStr = String(ES.CheckObjectCoercible(this));
-        if (_toString.call(searchStr) === '[object RegExp]') throw new TypeError('Cannot call method "startsWith" with a regex');
+        if (_toString.call(searchStr) === '[object RegExp]') {
+          throw new TypeError('Cannot call method "startsWith" with a regex');
+        }
         searchStr = String(searchStr);
         var startArg = arguments.length > 1 ? arguments[1] : undefined;
         var start = Math.max(ES.ToInteger(startArg), 0);
@@ -497,7 +500,9 @@
 
       endsWith: function (searchStr) {
         var thisStr = String(ES.CheckObjectCoercible(this));
-        if (_toString.call(searchStr) === '[object RegExp]') throw new TypeError('Cannot call method "endsWith" with a regex');
+        if (_toString.call(searchStr) === '[object RegExp]') {
+          throw new TypeError('Cannot call method "endsWith" with a regex');
+        }
         searchStr = String(searchStr);
         var thisLen = thisStr.length;
         var posArg = arguments.length > 1 ? arguments[1] : undefined;
@@ -516,12 +521,12 @@
         var thisStr = String(ES.CheckObjectCoercible(this));
         var position = ES.ToInteger(pos);
         var length = thisStr.length;
-        if (position < 0 || position >= length) return undefined;
+        if (position < 0 || position >= length) { return; }
         var first = thisStr.charCodeAt(position);
         var isEnd = (position + 1 === length);
-        if (first < 0xD800 || first > 0xDBFF || isEnd) return first;
+        if (first < 0xD800 || first > 0xDBFF || isEnd) { return first; }
         var second = thisStr.charCodeAt(position + 1);
-        if (second < 0xDC00 || second > 0xDFFF) return first;
+        if (second < 0xDC00 || second > 0xDFFF) { return first; }
         return ((first - 0xD800) * 1024) + (second - 0xDC00) + 0x10000;
       }
     };
@@ -542,9 +547,9 @@
       defineProperties(String.prototype, {
         trim: function () {
           if (this === undefined || this === null) {
-            throw new TypeError("can't convert " + this + " to object");
+            throw new TypeError("can't convert " + this + ' to object');
           }
-          return String(this).replace(trimRegexp, "");
+          return String(this).replace(trimRegexp, '');
         }
       });
     }
@@ -674,11 +679,11 @@
           for (; i < len; i++) {
             var kind = this.kind;
             var retval;
-            if (kind === "key") {
+            if (kind === 'key') {
               retval = i;
-            } else if (kind === "value") {
+            } else if (kind === 'value') {
               retval = array[i];
-            } else if (kind === "entry") {
+            } else if (kind === 'entry') {
               retval = [i, array[i]];
             }
             this.i = i + 1;
@@ -767,15 +772,15 @@
       },
 
       keys: function () {
-        return new ArrayIterator(this, "key");
+        return new ArrayIterator(this, 'key');
       },
 
       values: function () {
-        return new ArrayIterator(this, "value");
+        return new ArrayIterator(this, 'value');
       },
 
       entries: function () {
-        return new ArrayIterator(this, "entry");
+        return new ArrayIterator(this, 'entry');
       }
     };
     // Safari 7.1 defines Array#keys and Array#entries natively,
@@ -974,9 +979,9 @@
     var MathShims = {
       acosh: function (value) {
         value = Number(value);
-        if (Number.isNaN(value) || value < 1) return NaN;
-        if (value === 1) return 0;
-        if (value === Infinity) return value;
+        if (Number.isNaN(value) || value < 1) { return NaN; }
+        if (value === 1) { return 0; }
+        if (value === Infinity) { return value; }
         return Math.log(value + Math.sqrt(value * value - 1));
       },
 
@@ -993,17 +998,17 @@
         if (Number.isNaN(value) || value < -1 || value > 1) {
           return NaN;
         }
-        if (value === -1) return -Infinity;
-        if (value === 1) return Infinity;
-        if (value === 0) return value;
+        if (value === -1) { return -Infinity; }
+        if (value === 1) { return Infinity; }
+        if (value === 0) { return value; }
         return 0.5 * Math.log((1 + value) / (1 - value));
       },
 
       cbrt: function (value) {
         value = Number(value);
-        if (value === 0) return value;
+        if (value === 0) { return value; }
         var negate = value < 0, result;
-        if (negate) value = -value;
+        if (negate) { value = -value; }
         result = Math.pow(value, 1 / 3);
         return negate ? -result : result;
       },
@@ -1020,18 +1025,18 @@
 
       cosh: function (value) {
         value = Number(value);
-        if (value === 0) return 1; // +0 or -0
-        if (Number.isNaN(value)) return NaN;
-        if (!global_isFinite(value)) return Infinity;
-        if (value < 0) value = -value;
-        if (value > 21) return Math.exp(value) / 2;
+        if (value === 0) { return 1; } // +0 or -0
+        if (Number.isNaN(value)) { return NaN; }
+        if (!global_isFinite(value)) { return Infinity; }
+        if (value < 0) { value = -value; }
+        if (value > 21) { return Math.exp(value) / 2; }
         return (Math.exp(value) + Math.exp(-value)) / 2;
       },
 
       expm1: function (value) {
         value = Number(value);
-        if (value === -Infinity) return -1;
-        if (!global_isFinite(value) || value === 0) return value;
+        if (value === -Infinity) { return -1; }
+        if (!global_isFinite(value) || value === 0) { return value; }
         return Math.exp(value) - 1;
       },
 
@@ -1056,9 +1061,9 @@
           }
           return true;
         });
-        if (anyInfinity) return Infinity;
-        if (anyNaN) return NaN;
-        if (allZero) return 0;
+        if (anyInfinity) { return Infinity; }
+        if (anyNaN) { return NaN; }
+        if (allZero) { return 0; }
 
         numbers.sort(function (a, b) { return b - a; });
         var largest = numbers[0];
@@ -1077,13 +1082,13 @@
 
       log1p: function (value) {
         value = Number(value);
-        if (value < -1 || Number.isNaN(value)) return NaN;
-        if (value === 0 || value === Infinity) return value;
-        if (value === -1) return -Infinity;
+        if (value < -1 || Number.isNaN(value)) { return NaN; }
+        if (value === 0 || value === Infinity) { return value; }
+        if (value === -1) { return -Infinity; }
         var result = 0;
         var n = 50;
 
-        if (value < 0 || value > 1) return Math.log(1 + value);
+        if (value < 0 || value > 1) { return Math.log(1 + value); }
         for (var i = 1; i < n; i++) {
           if ((i % 2) === 0) {
             result -= Math.pow(value, i) / i;
@@ -1097,22 +1102,22 @@
 
       sign: function (value) {
         var number = +value;
-        if (number === 0) return number;
-        if (Number.isNaN(number)) return number;
+        if (number === 0) { return number; }
+        if (Number.isNaN(number)) { return number; }
         return number < 0 ? -1 : 1;
       },
 
       sinh: function (value) {
         value = Number(value);
-        if (!global_isFinite(value) || value === 0) return value;
+        if (!global_isFinite(value) || value === 0) { return value; }
         return (Math.exp(value) - Math.exp(-value)) / 2;
       },
 
       tanh: function (value) {
         value = Number(value);
-        if (Number.isNaN(value) || value === 0) return value;
-        if (value === Infinity) return 1;
-        if (value === -Infinity) return -1;
+        if (Number.isNaN(value) || value === 0) { return value; }
+        if (value === Infinity) { return 1; }
+        if (value === -Infinity) { return -1; }
         return (Math.exp(value) - Math.exp(-value)) / (Math.exp(value) + Math.exp(-value));
       },
 
@@ -1200,10 +1205,10 @@
         makeZeroTimeout = function () {
           // from http://dbaron.org/log/20100309-faster-timeouts
           var timeouts = [];
-          var messageName = "zero-timeout-message";
+          var messageName = 'zero-timeout-message';
           var setZeroTimeout = function (fn) {
             timeouts.push(fn);
-            window.postMessage(messageName, "*");
+            window.postMessage(messageName, '*');
           };
           var handleMessage = function (event) {
             if (event.source == window && event.data == messageName) {
@@ -1213,7 +1218,7 @@
               fn();
             }
           };
-          window.addEventListener("message", handleMessage, true);
+          window.addEventListener('message', handleMessage, true);
           return setZeroTimeout;
         };
       }
@@ -1518,7 +1523,7 @@
     // Map and Set require a true ES5 environment
     // Their fast path also requires that the environment preserve
     // property insertion order, which is not guaranteed by the spec.
-    var testOrder = function(a) {
+    var testOrder = function (a) {
       var b = Object.keys(a.reduce(function (o, k) {
         o[k] = true;
         return o;
@@ -1589,9 +1594,9 @@
               while (i.next !== head) {
                 i = i.next;
                 if (!i.isRemoved()) {
-                  if (kind === "key") {
+                  if (kind === 'key') {
                     result = i.key;
-                  } else if (kind === "value") {
+                  } else if (kind === 'value') {
                     result = i.value;
                   } else {
                     result = [i.key, i.value];
@@ -1764,15 +1769,15 @@
             },
 
             keys: function () {
-              return new MapIterator(this, "key");
+              return new MapIterator(this, 'key');
             },
 
             values: function () {
-              return new MapIterator(this, "value");
+              return new MapIterator(this, 'value');
             },
 
             entries: function () {
-              return new MapIterator(this, "key+value");
+              return new MapIterator(this, 'key+value');
             },
 
             forEach: function (callback) {

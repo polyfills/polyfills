@@ -11,7 +11,7 @@
     "rimraf": "2",
     "useragent": "2",
     "semver": "4",
-    "polyfills-db": "^1.12.0",
+    "polyfills-db": "^1.13.1",
     "uglify-js": "2",
     "lru-cache": "2"
   },
@@ -23,9 +23,9 @@
   },
   "scripts": {
     "update": "node --harmony-generators install",
-    "test": "mocha --reporter spec --bail --timeout 10s",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --timeout 10s",
-    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot --timeout 10s"
+    "test": "mocha --reporter spec --bail --timeout 30s",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --timeout 30s",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot --timeout 30s"
   },
   "main": "lib",
   "author": {
