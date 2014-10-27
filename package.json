@@ -11,14 +11,14 @@
     "rimraf": "2",
     "useragent": "2",
     "semver": "4",
-    "polyfills-db": "^1.14.0",
+    "polyfills-db": "^1.14.1",
     "uglify-js": "2",
     "lru-cache": "2"
   },
   "devDependencies": {
     "co": "3",
     "cogent": "1",
-    "mocha": "1",
+    "mocha": "2",
     "istanbul": "0"
   },
   "scripts": {
