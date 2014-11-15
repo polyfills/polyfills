@@ -69,7 +69,7 @@
   }
 
   function Body() {
-    this.body = null
+    this._body = null
     this.bodyUsed = false
 
     this.arrayBuffer = function() {
@@ -78,11 +78,11 @@
 
     this.blob = function() {
       var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(new Blob([this.body]))
+      return rejected ? rejected : Promise.resolve(new Blob([this._body]))
     }
 
     this.formData = function() {
-      return Promise.resolve(decode(this.body))
+      return Promise.resolve(decode(this._body))
     }
 
     this.json = function() {
@@ -91,7 +91,7 @@
         return rejected
       }
 
-      var body = this.body
+      var body = this._body
       return new Promise(function(resolve, reject) {
         try {
           resolve(JSON.parse(body))
@@ -103,30 +103,29 @@
 
     this.text = function() {
       var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(this.body)
+      return rejected ? rejected : Promise.resolve(this._body)
     }
 
     return this
   }
 
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
+
   function Request(url, options) {
     options = options || {}
     this.url = url
-    this.body = options.body
+    this._body = options.body
     this.credentials = options.credentials || null
     this.headers = new Headers(options.headers)
-    this.method = options.method || 'GET'
+    this.method = normalizeMethod(options.method || 'GET')
     this.mode = options.mode || null
     this.referrer = null
-  }
-
-  function encode(params) {
-    return Object.getOwnPropertyNames(params).filter(function(name) {
-      return params[name] !== undefined
-    }).map(function(name) {
-      var value = (params[name] === null) ? '' : params[name]
-      return encodeURIComponent(name) + '=' + encodeURIComponent(value)
-    }).join('&').replace(/%20/g, '+')
   }
 
   function decode(body) {
@@ -140,15 +139,6 @@
       }
     })
     return form
-  }
-
-  function isObject(value) {
-    try {
-      return Object.getPrototypeOf(value) === Object.prototype
-    } catch (ex) {
-      // Probably a string literal.
-      return false
-    }
   }
 
   function headers(xhr) {
@@ -170,8 +160,13 @@
       var xhr = new XMLHttpRequest()
 
       xhr.onload = function() {
+        var status = (xhr.status === 1223) ? 204 : xhr.status
+        if (status < 100 || status > 599) {
+          reject()
+          return
+        }
         var options = {
-          status: xhr.status,
+          status: status,
           statusText: xhr.statusText,
           headers: headers(xhr)
         }
@@ -190,19 +185,14 @@
         })
       })
 
-      var body = self.body
-      if (isObject(self.body)) {
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
-        body = encode(self.body)
-      }
-      xhr.send(body)
+      xhr.send((self._body === undefined) ? null : self._body)
     })
   }
 
   Body.call(Request.prototype)
 
   function Response(body, options) {
-    this.body = body
+    this._body = body
     this.type = 'default'
     this.url = null
     this.status = options.status
