@@ -1,4 +1,4 @@
-/*! http://mths.be/endswith v0.2.0 by @mathias */
+/*! https://mths.be/endswith v0.2.0 by @mathias */
 if (!String.prototype.endsWith) {
 	(function() {
 		'use strict'; // needed to support `apply`/`call` with `undefined`/`null`

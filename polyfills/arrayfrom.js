@@ -1,4 +1,4 @@
-/*! http://mths.be/array-from v0.2.0 by @mathias */
+/*! https://mths.be/array-from v0.2.0 by @mathias */
 if (!Array.from) {
 	(function() {
 		'use strict';

@@ -2,7 +2,7 @@
   * https://github.com/paulmillr/es6-shim
   * @license es6-shim Copyright 2013-2014 by Paul Miller (http://paulmillr.com)
   *   and contributors,  MIT License
-  * es6-shim: v0.20.2
+  * es6-shim: v0.21.0
   * see https://github.com/paulmillr/es6-shim/blob/master/LICENSE
   * Details and documentation:
   * https://github.com/paulmillr/es6-shim/
@@ -82,6 +82,13 @@
   var _hasOwnProperty = Object.prototype.hasOwnProperty;
   var ArrayIterator; // make our implementation private
 
+  var Symbol = globals.Symbol || {};
+  var isSymbol = function (sym) {
+    /*jshint notypeof: true */
+    return typeof globals.Symbol === 'function' && typeof sym === 'symbol';
+    /*jshint notypeof: false */
+  };
+
   var defineProperty = function (object, name, value, force) {
     if (!force && name in object) { return; }
     if (supportsDescriptors) {
@@ -122,8 +129,7 @@
   // work properly with each other, even though we don't have full Iterator
   // support.  That is, `Array.from(map.keys())` will work, but we don't
   // pretend to export a "real" Iterator interface.
-  var $iterator$ = (typeof Symbol === 'function' && Symbol.iterator) ||
-    '_es6shim_iterator_';
+  var $iterator$ = isSymbol(Symbol.iterator) ? Symbol.iterator : '_es6-shim iterator_';
   // Firefox ships a partial implementation using the name @@iterator.
   // https://bugzilla.mozilla.org/show_bug.cgi?id=907077#c14
   // So use that name if we detect it.
@@ -135,8 +141,7 @@
     var o = {};
     o[$iterator$] = impl;
     defineProperties(prototype, o);
-    /* jshint notypeof: true */
-    if (!prototype[$iterator$] && typeof $iterator$ === 'symbol') {
+    if (!prototype[$iterator$] && isSymbol($iterator$)) {
       // implementations are buggy when $iterator$ is a Symbol
       prototype[$iterator$] = impl;
     }
@@ -245,7 +250,11 @@
         // special case support for `arguments`
         return new ArrayIterator(o, 'value');
       }
-      var it = o[$iterator$]();
+      var itFn = o[$iterator$];
+      if (!ES.IsCallable(itFn)) {
+        throw new TypeError('value is not an iterable');
+      }
+      var it = itFn.call(o);
       if (!ES.TypeIsObject(it)) {
         throw new TypeError('bad iterator');
       }
@@ -417,14 +426,12 @@
   }());
 
   defineProperties(String, {
-    fromCodePoint: function (_) { // length = 1
-      var points = _slice.call(arguments, 0, arguments.length);
+    fromCodePoint: function fromCodePoint(_) { // length = 1
       var result = [];
       var next;
-      for (var i = 0, length = points.length; i < length; i++) {
-        next = Number(points[i]);
-        if (!ES.SameValue(next, ES.ToInteger(next)) ||
-            next < 0 || next > 0x10FFFF) {
+      for (var i = 0, length = arguments.length; i < length; i++) {
+        next = Number(arguments[i]);
+        if (!ES.SameValue(next, ES.ToInteger(next)) || next < 0 || next > 0x10FFFF) {
           throw new RangeError('Invalid code point ' + next);
         }
 
@@ -439,14 +446,13 @@
       return result.join('');
     },
 
-    raw: function (callSite) { // raw.length===1
-      var substitutions = _slice.call(arguments, 1, arguments.length);
+    raw: function raw(callSite) { // raw.length===1
       var cooked = ES.ToObject(callSite, 'bad callSite');
       var rawValue = cooked.raw;
-      var raw = ES.ToObject(rawValue, 'bad raw value');
-      var len = Object.keys(raw).length;
+      var rawString = ES.ToObject(rawValue, 'bad raw value');
+      var len = rawString.length;
       var literalsegments = ES.ToLength(len);
-      if (literalsegments === 0) {
+      if (literalsegments <= 0) {
         return '';
       }
 
@@ -455,16 +461,13 @@
       var nextKey, next, nextSeg, nextSub;
       while (nextIndex < literalsegments) {
         nextKey = String(nextIndex);
-        next = raw[nextKey];
+        next = rawString[nextKey];
         nextSeg = String(next);
         stringElements.push(nextSeg);
         if (nextIndex + 1 >= literalsegments) {
           break;
         }
-        next = substitutions[nextKey];
-        if (typeof next === 'undefined') {
-          break;
-        }
+        next = nextIndex + 1 < arguments.length ? arguments[nextIndex + 1] : '';
         nextSub = String(next);
         stringElements.push(nextSub);
         nextIndex++;
@@ -525,7 +528,7 @@
       return thisStr.slice(end - searchStr.length, end) === searchStr;
     },
 
-    contains: function (searchString) {
+    includes: function includes(searchString) {
       var position = arguments.length > 1 ? arguments[1] : void 0;
       // Somehow this trick makes method 100% compat with the spec.
       return _indexOf.call(this, searchString, position) !== -1;
@@ -764,10 +767,14 @@
       if (!ES.IsCallable(predicate)) {
         throw new TypeError('Array#find: predicate must be a function');
       }
-      var thisArg = arguments[1];
+      var thisArg = arguments.length > 1 ? arguments[1] : null;
       for (var i = 0, value; i < length; i++) {
         value = list[i];
-        if (predicate.call(thisArg, value, i, list)) { return value; }
+        if (thisArg) {
+          if (predicate.call(thisArg, value, i, list)) { return value; }
+        } else {
+          if (predicate(value, i, list)) { return value; }
+        }
       }
       return;
     },
@@ -778,9 +785,13 @@
       if (!ES.IsCallable(predicate)) {
         throw new TypeError('Array#findIndex: predicate must be a function');
       }
-      var thisArg = arguments[1];
+      var thisArg = arguments.length > 1 ? arguments[1] : null;
       for (var i = 0; i < length; i++) {
-        if (predicate.call(thisArg, list[i], i, list)) { return i; }
+        if (thisArg) {
+          if (predicate.call(thisArg, list[i], i, list)) { return i; }
+        } else {
+          if (predicate(list[i], i, list)) { return i; }
+        }
       }
       return -1;
     },
@@ -804,6 +815,16 @@
   }
   if (Array.prototype.entries && !ES.IsCallable([1].entries().next)) {
     delete Array.prototype.entries;
+  }
+
+  // Chrome 38 defines Array#keys and Array#entries, and Array#@@iterator, but not Array#values
+  if (Array.prototype.keys && Array.prototype.entries && !Array.prototype.values && Array.prototype[$iterator$]) {
+    defineProperties(Array.prototype, {
+      values: Array.prototype[$iterator$]
+    });
+    if (isSymbol(Symbol.unscopables)) {
+      Array.prototype[Symbol.unscopables].values = true;
+    }
   }
   defineProperties(Array.prototype, ArrayPrototypeShims);
 
@@ -1510,6 +1531,14 @@
 
     return Promise;
   })();
+
+  // Chrome's native Promise has extra methods that it shouldn't have. Let's remove them.
+  if (globals.Promise) {
+    delete globals.Promise.accept;
+    delete globals.Promise.defer;
+    delete globals.Promise.prototype.chain;
+  }
+
   // export the Promise constructor.
   defineProperties(globals, { Promise: PromiseShim });
   // In Chrome 33 (and thereabouts) Promise is defined, but the
@@ -1628,6 +1657,9 @@
 
         function Map(iterable) {
           var map = this;
+          if (!ES.TypeIsObject(map)) {
+            throw new TypeError('Map does not accept arguments when called as a function');
+          }
           map = emulateES6construct(map);
           if (!map._es6map) {
             throw new TypeError('bad map');
@@ -1802,7 +1834,11 @@
             var context = arguments.length > 1 ? arguments[1] : null;
             var it = this.entries();
             for (var entry = it.next(); !entry.done; entry = it.next()) {
-              callback.call(context, entry.value[1], entry.value[0], this);
+              if (context) {
+                callback.call(context, entry.value[1], entry.value[0], this);
+              } else {
+                callback(entry.value[1], entry.value[0], this);
+              }
             }
           }
         });
@@ -1818,6 +1854,9 @@
         // required.
         var SetShim = function Set(iterable) {
           var set = this;
+          if (!ES.TypeIsObject(set)) {
+            throw new TypeError('Set does not accept arguments when called as a function');
+          }
           set = emulateES6construct(set);
           if (!set._es6set) {
             throw new TypeError('bad set');
@@ -1924,11 +1963,6 @@
             return this['[[SetData]]'].clear();
           },
 
-          keys: function () {
-            ensureMap(this);
-            return this['[[SetData]]'].keys();
-          },
-
           values: function () {
             ensureMap(this);
             return this['[[SetData]]'].values();
@@ -1942,12 +1976,17 @@
           forEach: function (callback) {
             var context = arguments.length > 1 ? arguments[1] : null;
             var entireSet = this;
-            ensureMap(this);
+            ensureMap(entireSet);
             this['[[SetData]]'].forEach(function (value, key) {
-              callback.call(context, key, key, entireSet);
+              if (context) {
+                callback.call(context, key, key, entireSet);
+              } else {
+                callback(key, key, entireSet);
+              }
             });
           }
         });
+        defineProperty(SetShim, 'keys', SetShim.values, true);
         addIterator(SetShim.prototype, function () { return this.values(); });
 
         return SetShim;
@@ -1984,6 +2023,9 @@
         globals.Map = collectionShims.Map;
         globals.Set = collectionShims.Set;
       }
+    }
+    if (globals.Set.prototype.keys !== globals.Set.prototype.values) {
+      defineProperty(globals.Set.prototype, 'keys', globals.Set.prototype.values, true);
     }
     // Shim incomplete iterator implementations.
     addIterator(Object.getPrototypeOf((new globals.Map()).keys()));

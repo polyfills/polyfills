@@ -1,5 +1,5 @@
-/*! http://mths.be/contains v0.2.0 by @mathias */
-if (!String.prototype.contains) {
+/*! https://mths.be/includes v1.0.0 by @mathias */
+if (!String.prototype.includes) {
 	(function() {
 		'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
 		var toString = {}.toString;
@@ -13,7 +13,7 @@ if (!String.prototype.contains) {
 			return result;
 		}());
 		var indexOf = ''.indexOf;
-		var contains = function(search) {
+		var includes = function(search) {
 			if (this == null) {
 				throw TypeError();
 			}
@@ -38,13 +38,13 @@ if (!String.prototype.contains) {
 			return indexOf.call(string, searchString, pos) != -1;
 		};
 		if (defineProperty) {
-			defineProperty(String.prototype, 'contains', {
-				'value': contains,
+			defineProperty(String.prototype, 'includes', {
+				'value': includes,
 				'configurable': true,
 				'writable': true
 			});
 		} else {
-			String.prototype.contains = contains;
+			String.prototype.includes = includes;
 		}
 	}());
 }

@@ -1,7 +1,7 @@
 {
   "name": "polyfills",
   "description": "user-agent-based polyfill combinator",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "dependencies": {
     "debug": "*",
     "mz": "1",
@@ -11,7 +11,7 @@
     "rimraf": "2",
     "useragent": "2",
     "semver": "4",
-    "polyfills-db": "^1.14.3",
+    "polyfills-db": "^1.15.0",
     "uglify-js": "2",
     "lru-cache": "2"
   },
