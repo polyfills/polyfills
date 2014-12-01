@@ -11,9 +11,7 @@
     "mz": "1",
     "native-or-bluebird": "1",
     "polyfills-db": "^1.18.0",
-    "rimraf": "2",
-    "semver": "4",
-    "useragent": "2"
+    "rimraf": "2"
   },
   "devDependencies": {
     "co": "3",
