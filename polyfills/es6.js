@@ -77,16 +77,20 @@
   var supportsDescriptors = !!Object.defineProperty && arePropertyDescriptorsSupported();
   var startsWithIsCompliant = startsWithRejectsRegex();
   var _slice = Array.prototype.slice;
-  var _indexOf = String.prototype.indexOf;
-  var _toString = Object.prototype.toString;
-  var _hasOwnProperty = Object.prototype.hasOwnProperty;
+  var _indexOf = Function.call.bind(String.prototype.indexOf);
+  var _toString = Function.call.bind(Object.prototype.toString);
+  var _hasOwnProperty = Function.call.bind(Object.prototype.hasOwnProperty);
   var ArrayIterator; // make our implementation private
 
   var Symbol = globals.Symbol || {};
-  var isSymbol = function (sym) {
-    /*jshint notypeof: true */
-    return typeof globals.Symbol === 'function' && typeof sym === 'symbol';
-    /*jshint notypeof: false */
+  var Type = {
+    string: function (x) { return _toString(x) === '[object String]'; },
+    regex: function (x) { return _toString(x) === '[object RegExp]'; },
+    symbol: function (x) {
+      /*jshint notypeof: true */
+      return typeof globals.Symbol === 'function' && typeof x === 'symbol';
+      /*jshint notypeof: false */
+    }
   };
 
   var defineProperty = function (object, name, value, force) {
@@ -129,7 +133,7 @@
   // work properly with each other, even though we don't have full Iterator
   // support.  That is, `Array.from(map.keys())` will work, but we don't
   // pretend to export a "real" Iterator interface.
-  var $iterator$ = isSymbol(Symbol.iterator) ? Symbol.iterator : '_es6-shim iterator_';
+  var $iterator$ = Type.symbol(Symbol.iterator) ? Symbol.iterator : '_es6-shim iterator_';
   // Firefox ships a partial implementation using the name @@iterator.
   // https://bugzilla.mozilla.org/show_bug.cgi?id=907077#c14
   // So use that name if we detect it.
@@ -141,7 +145,7 @@
     var o = {};
     o[$iterator$] = impl;
     defineProperties(prototype, o);
-    if (!prototype[$iterator$] && isSymbol($iterator$)) {
+    if (!prototype[$iterator$] && Type.symbol($iterator$)) {
       // implementations are buggy when $iterator$ is a Symbol
       prototype[$iterator$] = impl;
     }
@@ -150,7 +154,7 @@
   // taken directly from https://github.com/ljharb/is-arguments/blob/master/index.js
   // can be replaced with require('is-arguments') if we ever use a build process instead
   var isArguments = function isArguments(value) {
-    var str = _toString.call(value);
+    var str = _toString(value);
     var result = str === '[object Arguments]';
     if (!result) {
       result = str !== '[object Array]' &&
@@ -158,7 +162,7 @@
         typeof value === 'object' &&
         typeof value.length === 'number' &&
         value.length >= 0 &&
-        _toString.call(value.callee) === '[object Function]';
+        _toString(value.callee) === '[object Function]';
     }
     return result;
   };
@@ -201,7 +205,7 @@
     IsCallable: function (x) {
       return typeof x === 'function' &&
         // some versions of IE say that typeof /abc/ === 'function'
-        _toString.call(x) === '[object Function]';
+        _toString(x) === '[object Function]';
     },
 
     ToInt32: function (x) {
@@ -479,8 +483,8 @@
   // Firefox 31 reports this function's length as 0
   // https://bugzilla.mozilla.org/show_bug.cgi?id=1062484
   if (String.fromCodePoint.length !== 1) {
-    var originalFromCodePoint = String.fromCodePoint;
-    defineProperty(String, 'fromCodePoint', function (_) { return originalFromCodePoint.apply(this, arguments); }, true);
+    var originalFromCodePoint = Function.apply.bind(String.fromCodePoint);
+    defineProperty(String, 'fromCodePoint', function (_) { return originalFromCodePoint(this, arguments); }, true);
   }
 
   var StringShims = {
@@ -506,7 +510,7 @@
 
     startsWith: function (searchStr) {
       var thisStr = String(ES.CheckObjectCoercible(this));
-      if (_toString.call(searchStr) === '[object RegExp]') {
+      if (Type.regex(searchStr)) {
         throw new TypeError('Cannot call method "startsWith" with a regex');
       }
       searchStr = String(searchStr);
@@ -517,7 +521,7 @@
 
     endsWith: function (searchStr) {
       var thisStr = String(ES.CheckObjectCoercible(this));
-      if (_toString.call(searchStr) === '[object RegExp]') {
+      if (Type.regex(searchStr)) {
         throw new TypeError('Cannot call method "endsWith" with a regex');
       }
       searchStr = String(searchStr);
@@ -531,7 +535,7 @@
     includes: function includes(searchString) {
       var position = arguments.length > 1 ? arguments[1] : void 0;
       // Somehow this trick makes method 100% compat with the spec.
-      return _indexOf.call(this, searchString, position) !== -1;
+      return _indexOf(this, searchString, position) !== -1;
     },
 
     codePointAt: function (pos) {
@@ -599,8 +603,10 @@
 
   if (!startsWithIsCompliant) {
     // Firefox has a noncompliant startsWith implementation
-    String.prototype.startsWith = StringShims.startsWith;
-    String.prototype.endsWith = StringShims.endsWith;
+    defineProperties(String.prototype, {
+      startsWith: StringShims.startsWith,
+      endsWith: StringShims.endsWith
+    });
   }
 
   var ArrayShims = {
@@ -732,7 +738,7 @@
         to += count - 1;
       }
       while (count > 0) {
-        if (_hasOwnProperty.call(o, from)) {
+        if (_hasOwnProperty(o, from)) {
           o[to] = o[from];
         } else {
           delete o[from];
@@ -822,7 +828,7 @@
     defineProperties(Array.prototype, {
       values: Array.prototype[$iterator$]
     });
-    if (isSymbol(Symbol.unscopables)) {
+    if (Type.symbol(Symbol.unscopables)) {
       Array.prototype[Symbol.unscopables].values = true;
     }
   }
@@ -1948,7 +1954,7 @@
           'delete': function (key) {
             var fkey;
             if (this._storage && (fkey = fastkey(key)) !== null) {
-              var hasFKey = _hasOwnProperty.call(this._storage, fkey);
+              var hasFKey = _hasOwnProperty(this._storage, fkey);
               return (delete this._storage[fkey]) && hasFKey;
             }
             ensureMap(this);
