@@ -1,7 +1,7 @@
 {
   "name": "polyfills",
   "description": "user-agent-based polyfill combinator",
-  "version": "1.9.7",
+  "version": "1.10.0",
   "dependencies": {
     "bluebird": "2",
     "debug": "*",
