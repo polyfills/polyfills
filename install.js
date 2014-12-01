@@ -1,5 +1,6 @@
 
 var co = require('co')
+var fs = require('mz/fs')
 var path = require('path')
 var rimraf = require('rimraf')
 var mkdirp = require('mkdirp')
@@ -22,4 +23,7 @@ co(function* () {
     })
     console.log('downloading "%s"', url)
   })
+  var prom = yield fs.readFile('polyfills/promise.js', 'utf8')
+  prom += '\n\nES6Promise.polyfill();\n'
+  yield fs.writeFile('polyfills/promise.js', prom)
 })()
