@@ -7,10 +7,10 @@
     "debug": "*",
     "lru-cache": "2",
     "mkdirp": "0",
-    "mnfy": "2",
+    "mnfy": "3",
     "mz": "1",
     "native-or-bluebird": "1",
-    "polyfills-db": "^1.18.0",
+    "polyfills-db": "^1.19.2",
     "rimraf": "2"
   },
   "devDependencies": {
