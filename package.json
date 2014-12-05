@@ -17,8 +17,7 @@
     "co": "3",
     "cogent": "1",
     "istanbul": "0",
-    "mocha": "2",
-    "mz": "1"
+    "mocha": "2"
   },
   "scripts": {
     "update": "node --harmony-generators install",
