@@ -1,7 +1,7 @@
 {
   "name": "polyfills",
   "description": "user-agent-based polyfill combinator",
-  "version": "1.12.1",
+  "version": "2.0.0",
   "dependencies": {
     "lru-cache": "2",
     "mnfy": "3",
