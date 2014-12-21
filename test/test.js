@@ -13,7 +13,7 @@ var ios51 = 'Mozilla/5.0 (iPad; CPU OS 5_0 like Mac OS X) AppleWebKit/534.46 (KH
 var android403 = 'Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30'
 
 before(function () {
-  return require('..').update()
+  return require('..').load
 })
 
 describe('Polyfills(options)', function () {

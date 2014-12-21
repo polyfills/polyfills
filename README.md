@@ -37,10 +37,14 @@ var polyfill = polyfills(options)
 var js = polyfill(<useragent>)
 ```
 
+### polyfills.load.then( => )
+
+The first `.update()` instance.
+Wait until the polyfills are loaded before using this library.
+
 ### polyfills.update().then( => )
 
-Load all the polyfills from the source.
-You need to wait until this completes before using the polyfill.
+Reload all the polyfills from the source.
 
 ### var polyfill = polyfills([options])
 
