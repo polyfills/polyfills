@@ -3,21 +3,17 @@
   "description": "user-agent-based polyfill combinator",
   "version": "1.12.1",
   "dependencies": {
-    "bluebird": "2",
-    "debug": "*",
     "lru-cache": "2",
-    "mkdirp": "0",
     "mnfy": "3",
-    "mz": "1",
     "native-or-bluebird": "1",
-    "polyfills-db": "2",
-    "rimraf": "2"
+    "polyfills-db": "3",
+    "requisition": "1"
   },
   "devDependencies": {
+    "bluebird": "2",
     "istanbul": "0",
-    "mnfy": "3",
     "mocha": "2",
-    "requisition": "1"
+    "mz": "1"
   },
   "scripts": {
     "test": "mocha --reporter spec --bail --timeout 30s",

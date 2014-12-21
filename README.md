@@ -21,12 +21,7 @@ This library is merely the "logic" and does not handle any HTTP serving.
 It essentially does the following:
 
 - Parses user agent strings for `<family> <major>.<minor>.<version>` and creates polyfill bundles based on these variables.
-- Caches builds locally.
-- Creates minified and gzipped builds.
-- Returns metadata for the `Content-Encoding`, `Content-Length` and `ETag` headers.
-- Allows you to choose between which build you'd like and whether to read it or stream it.
-
-It also stores nothing in memory, making it suitable for production usage within existing node apps.
+- Returned a bundle of all the minified polyfills.
 
 ## Installation
 
@@ -36,51 +31,37 @@ npm install polyfills
 
 ## Usage
 
-### var polyfill = Polyfills([options])
-
 ```js
-var polyfill = require('polyfills')()
+var polyfills = require('polyfills')
+var polyfill = polyfills(options)
+var js = polyfill(<useragent>)
 ```
 
-Return a new instance of `polyfill` based on `options`.
+### polyfills.update().then( => )
+
+Load all the polyfills from the source.
+You need to wait until this completes before using the polyfill.
+
+### var polyfill = polyfills([options])
+
+The options are:
 
 - `include` - which polyfills to include.
   This is an __inclusive__ list.
   The names are included in [polyfills/db](https://github.com/polyfills/db/blob/master/lib/polyfills.js).
 - `exclude` - conversely, you can exclude specific polyfills.
 
-### polyfill.clean()
+### var js = polyfill(useragent)
 
-Clean all the bundles from the cache.
+Bundle a polyfill for a useragent.
 
-### polyfill(useragent).then( data => )
-
-Build and cache the bundle. Returns data with:
-
-- `name` - the name of the build
-- `hash` - a `sha256` sha sum of the JS file for `ETag` headers
-- `polyfills[]` - an array of all the polyfills' names used
-- `length[extension]` - the byte size of each build for `Content-Length` headers
-
-The possible extensions are:
-
-- `.json` - where the metadata is stored
-- `.js`
-- `.js.gz`
-- `.min.js`
-- `.min.js.gz`
-
-### polyfill.read(name, ext, [encoding]).then( buf => )
-
-Read a bundle.
-
-### var stream = polyfill.stream(name, ext)
-
-Stream a bundle.
-
-### var filename = polyfill.pathOf(name, ext)
-
-Get the filename of a bundle.
+```js
+app.use(function (req, res, next) {
+  var js = polyfill(req.headers['user-agent')
+  res.type('js')
+  res.send(js)
+})
+```
 
 ## Adding polyfills
 
