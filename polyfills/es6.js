@@ -2,8 +2,8 @@
   * https://github.com/paulmillr/es6-shim
   * @license es6-shim Copyright 2013-2014 by Paul Miller (http://paulmillr.com)
   *   and contributors,  MIT License
-  * es6-shim: v0.21.1
-  * see https://github.com/paulmillr/es6-shim/blob/master/LICENSE
+  * es6-shim: v0.22.1
+  * see https://github.com/paulmillr/es6-shim/blob/0.22.1/LICENSE
   * Details and documentation:
   * https://github.com/paulmillr/es6-shim/
   */
@@ -1027,8 +1027,23 @@
       if (!ES.TypeIsObject(this)) {
         throw new TypeError('Method called on incompatible type: must be an object.');
       }
-      var str = String(this);
-      return str.slice(str.lastIndexOf('/') + 1);
+      var result = '';
+      if (this.global) {
+        result += 'g';
+      }
+      if (this.ignoreCase) {
+        result += 'i';
+      }
+      if (this.multiline) {
+        result += 'm';
+      }
+      if (this.unicode) {
+        result += 'u';
+      }
+      if (this.sticky) {
+        result += 'y';
+      }
+      return result;
     };
 
     Value.getter(RegExp.prototype, 'flags', regExpFlagsGetter);
