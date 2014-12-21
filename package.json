@@ -10,17 +10,16 @@
     "mnfy": "3",
     "mz": "1",
     "native-or-bluebird": "1",
-    "polyfills-db": "^1.19.2",
+    "polyfills-db": "2",
     "rimraf": "2"
   },
   "devDependencies": {
-    "co": "3",
-    "cogent": "1",
     "istanbul": "0",
-    "mocha": "2"
+    "mnfy": "3",
+    "mocha": "2",
+    "requisition": "1"
   },
   "scripts": {
-    "update": "node --harmony-generators install",
     "test": "mocha --reporter spec --bail --timeout 30s",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --timeout 30s",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter dot --timeout 30s"

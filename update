@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+var fs = require('mz/fs')
+var path = require('path')
+var rimraf = require('rimraf')
+var assert = require('assert')
+var mkdirp = require('mkdirp')
+var minify = require('mnfy').js
+var request = require('requisition')
+var polyfills = require('polyfills-db').polyfills.polyfills
+
+var out = path.join(__dirname, 'polyfills')
+
+rimraf.sync(out)
+mkdirp.sync(out)
+
+Promise.all(polyfills.map(function (polyfill) {
+  var name = polyfill.name
+  return request(polyfill.url).then(function (response) {
+    assert(response.status === 200)
+    return response.text()
+  }).then(function (js) {
+    // remove when they make it auto polyfilling
+    if (polyfill.name === 'promise') js += ';ES6Promise.polyfill();'
+    return minify(js)
+  }).then(function (res) {
+    return fs.writeFile(path.join(out, name + '.js'), res.code)
+  })
+})).then(function () {
+  console.log('Polyfills updated!')
+  process.exit(0)
+}).catch(function (err) {
+  console.error(err.stack)
+  process.exit(1)
+})

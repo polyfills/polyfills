@@ -124,7 +124,7 @@ return polyfill().then(function (data) {
 
 describe('Browsers', function () {
   describe('IE8', function () {
-    it('should include ES5 and ES6', function () {
+    it.skip('should include ES5 and ES6', function () {
       return polyfill(ie8).then(function (data) {
         return polyfill.read(data.name, '.js')
       }).then(function (out) {

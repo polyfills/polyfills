@@ -1,14 +1,1 @@
-this.Element && function(ElementPrototype) {
-	ElementPrototype.matchesSelector = ElementPrototype.matchesSelector || 
-	ElementPrototype.mozMatchesSelector ||
-	ElementPrototype.msMatchesSelector ||
-	ElementPrototype.oMatchesSelector ||
-	ElementPrototype.webkitMatchesSelector ||
-	function (selector) {
-		var node = this, nodes = (node.parentNode || node.document).querySelectorAll(selector), i = -1;
-
-		while (nodes[++i] && nodes[i] != node);
-
-		return !!nodes[i];
-	}
-}(Element.prototype);
+this.Element&&function(e){e.matchesSelector=e.matchesSelector||e.mozMatchesSelector||e.msMatchesSelector||e.oMatchesSelector||e.webkitMatchesSelector||function(e){for(var t=this,c=(t.parentNode||t.document).querySelectorAll(e),o=-1;c[++o]&&c[o]!=t;);return!!c[o]}}(Element.prototype);

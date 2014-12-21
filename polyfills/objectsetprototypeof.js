@@ -1,7 +1,1 @@
-
-if (!Object.setPrototypeOf) {
-  Object.setPrototypeOf = function (obj, proto) {
-    obj.__proto__ = proto;
-    return obj;
-  }
-}
+Object.setPrototypeOf||(Object.setPrototypeOf=function(t,e){return t.__proto__=e,t});
