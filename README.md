@@ -52,7 +52,7 @@ The options are:
 
 - `include` - which polyfills to include.
   This is an __inclusive__ list.
-  The names are included in [polyfills/db](https://github.com/polyfills/db/blob/master/lib/polyfills.js).
+  The names are included in [polyfills/db](https://github.com/polyfills/db/blob/master/lib/polyfills.json).
 - `exclude` - conversely, you can exclude specific polyfills.
 
 ### var js = polyfill(useragent)
