@@ -28,7 +28,7 @@ describe('Polyfills(options)', function () {
 
   it('options.exclude', function () {
     var p = require('..')({
-      exclude: ['domelements']
+      exclude: ['domelements', 'dom4']
     })
 
     var js = p(chrome)
