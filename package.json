@@ -5,7 +5,7 @@
   "dependencies": {
     "lru-cache": "2",
     "mnfy": "3",
-    "native-or-bluebird": "1",
+    "native-or-bluebird": "1.2.0",
     "polyfills-db": "3",
     "requisition": "1"
   },
