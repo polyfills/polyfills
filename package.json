@@ -13,7 +13,7 @@
     "bluebird": "2",
     "istanbul": "0",
     "mocha": "2",
-    "mz": "1"
+    "mz": "2.2.0"
   },
   "scripts": {
     "test": "mocha --reporter spec --bail --timeout 30s",
