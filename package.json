@@ -10,7 +10,7 @@
     "requisition": "1"
   },
   "devDependencies": {
-    "bluebird": "2",
+    "bluebird": "3.1.4",
     "istanbul": "0",
     "mocha": "2",
     "mz": "1"
